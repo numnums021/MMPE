@@ -117,7 +117,7 @@ public class Matrix {
 
         int tmp = 0;
         for (int i = 11; i < columns; i++){
-            matrix[i][0] = getSumSquresColumns(i, expandedMatrix) / matrix[tmp][0];
+            matrix[i][0] = getSumColumns(i, expandedMatrix) / matrix[tmp][0];
             tmp++;
         }
     }
@@ -128,6 +128,14 @@ public class Matrix {
             sumExpandedMatrix += expandedMatrix[column][row] * expandedMatrix[column][row];
         }
         return sumExpandedMatrix;
+    }
+
+    public double getSumColumns(int column, double[][] expandedMatrix) {
+        double sum = 0.0;
+        for (int row = 0; row < expandedMatrix[0].length; row++){
+            sum += expandedMatrix[column][row];
+        }
+        return sum;
     }
 
     public void fillRegrMatrix(double[][] expandedMatrix, double[][] sumSquaresMatrix) {
