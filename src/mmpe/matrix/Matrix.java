@@ -1,6 +1,7 @@
 package mmpe.matrix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 
@@ -32,36 +33,35 @@ public class Matrix {
         matrix[0][14] = 8.58;
     }
 
-    public void fillingCodingFactorsMatrix() {
-        matrix[0][0] = -1;      matrix[1][0] = -1;       matrix[2][0] = -1;
-        matrix[0][1] = 1;       matrix[1][1] = -1;       matrix[2][1] = -1;
-        matrix[0][2] = -1;      matrix[1][2] = 1;        matrix[2][2] = -1;
-        matrix[0][3] = 1;       matrix[1][3] = 1;        matrix[2][3] = -1;
-        matrix[0][4] = -1;      matrix[1][4] = -1;       matrix[2][4] = 1;
-        matrix[0][5] = 1;       matrix[1][5] = -1;       matrix[2][5] = 1;
-        matrix[0][6] = -1;      matrix[1][6] = 1;        matrix[2][6] = 1;
-        matrix[0][7] = 1;       matrix[1][7] = 1;        matrix[2][7] = 1;
-        matrix[0][8] = -1.215;  matrix[1][8] = 0;        matrix[2][8] = 0;
-        matrix[0][9] = 1.215;   matrix[1][9] = 0;        matrix[2][9] = 0;
-        matrix[0][10] = 0;      matrix[1][10] = -1.215;  matrix[2][10] = 0;
-        matrix[0][11] = 0;      matrix[1][11] = 1.215;   matrix[2][11] = 0;
-        matrix[0][12] = 0;      matrix[1][12] = 0;       matrix[2][12] = -1.215;
-        matrix[0][13] = 0;      matrix[1][13] = 0;       matrix[2][13] = 1.215;
-        matrix[0][14] = 0;      matrix[1][14] = 0;       matrix[2][14] = 0;
-    }
-
-    public void fillingNaturalFactorsMatrix(Map<String, ArrayList<Double>> initialMap, double[][] matrixCodingFactors){
-
+    public void fillingCodingFactorsMatrix(Map<String, ArrayList<Double>> initialMap, double[][] naturalFactorsMatrix) {
         int columns = matrix.length;
         int rows = matrix[0].length;
         for (int i = 0; i < columns; i++) {
-            double xAvg = initialMap.get("X").get(i);
+            double xAvg = (initialMap.get("xMax").get(i) + initialMap.get("xMin").get(i) ) / 2;
             double xMin = initialMap.get("xMin").get(i);
             for (int j = 0; j< rows; j++) {
-                double elementMatrixCodedFactors = matrixCodingFactors[i][j];
-                matrix[i][j] = (xAvg - xMin) * elementMatrixCodedFactors  + xAvg;
+                double elementMatrixNaturalFactors = naturalFactorsMatrix[i][j];
+                matrix[i][j] = (elementMatrixNaturalFactors - xAvg) / (xAvg - xMin);
             }
         }
+    }
+
+    public void fillingNaturalFactorsMatrix(Map<String, ArrayList<Double>> initialMap){
+        matrix[0][0] = initialMap.get("X").get(0);      matrix[1][0] = initialMap.get("X").get(1);       matrix[2][0] = initialMap.get("X").get(2);
+        matrix[0][1] = 6;       matrix[1][1] = 4;       matrix[2][1] = 8;
+        matrix[0][2] = 5;      matrix[1][2] = 5;        matrix[2][2] = 8;
+        matrix[0][3] = 6;       matrix[1][3] = 5;        matrix[2][3] = 8;
+        matrix[0][4] = 5;      matrix[1][4] = 4;       matrix[2][4] = 11;
+        matrix[0][5] = 6;       matrix[1][5] = 4;       matrix[2][5] = 11;
+        matrix[0][6] = 5;      matrix[1][6] = 5;        matrix[2][6] = 11;
+        matrix[0][7] = 6;       matrix[1][7] = 5;        matrix[2][7] = 11;
+        matrix[0][8] = 4.8925;  matrix[1][8] = 4.5;        matrix[2][8] = 9.5;
+        matrix[0][9] = 6.1075;   matrix[1][9] = 4.5;        matrix[2][9] = 9.5;
+        matrix[0][10] = 5.5;      matrix[1][10] = 3.8925;  matrix[2][10] = 9.5;
+        matrix[0][11] = 5.5;      matrix[1][11] = 5.1075;   matrix[2][11] = 9.5;
+        matrix[0][12] = 5.5;      matrix[1][12] = 4.5;       matrix[2][12] = 7.6775;
+        matrix[0][13] = 5.5;      matrix[1][13] = 4.5;       matrix[2][13] = 11.3225;
+        matrix[0][14] = 5.5;      matrix[1][14] = 4.5;       matrix[2][14] = 9.5;
     }
 
     public void fillingExtendedMatrix(double[][] factorCodingMatrix, double[][] yExpMatrix) {
@@ -177,4 +177,14 @@ public class Matrix {
         return matrix;
     }
 
+    public double getElementMatrix(int column, int row) {
+        return matrix[column][row];
+    }
+
+    @Override
+    public String toString() {
+        return "Matrix{" +
+                "matrix=" + Arrays.toString(matrix) +
+                '}';
+    }
 }

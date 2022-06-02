@@ -3,6 +3,7 @@ package mmpe;
 import mmpe.matrix.Matrix;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args){
@@ -12,13 +13,14 @@ public class Main {
         criteria.fillingCriteriaMatrix();
         criteria.printMatrix();
 
+        Matrix factorNatural = new Matrix("Матрица натуральных значений", 3, 15);
+        factorNatural.fillingNaturalFactorsMatrix(initialDataMap);
+        factorNatural.printMatrix();
+
         Matrix factorCoding = new Matrix("Матрица кодирования фактора", 3, 15);
-        factorCoding.fillingCodingFactorsMatrix();
+        factorCoding.fillingCodingFactorsMatrix(initialDataMap, factorNatural.getMatrix());
         factorCoding.printMatrix();
 
-        Matrix factorNatural = new Matrix("Матрица натуральных значений", 3, 15);
-        factorNatural.fillingNaturalFactorsMatrix(initialDataMap, factorCoding.getMatrix());
-        factorNatural.printMatrix();
 
         Matrix extended = new Matrix("Расширенная матрица", 22, 15);
         extended.fillingExtendedMatrix(factorCoding.getMatrix(), criteria.getMatrix());
@@ -35,6 +37,8 @@ public class Main {
         Matrix cao = new Matrix("COA", 1, 15);
         cao.fillingCAOMatrix(criteria.getMatrix(), regression.getMatrix());
         cao.printMatrix();
+
+        System.out.println("\n Прогнозируемое значение = " + regression.getElementMatrix(0, 0));
     }
 
     // 5,5     4,5    9,5
@@ -50,7 +54,7 @@ public class Main {
             System.out.print("x" + (i + 1) +" = ");
             try {
             double value = new Scanner(System.in).nextDouble();
-            if (value > initialDataMap.get("xMin").get(i) && value < initialDataMap.get("xMax").get(i))
+            if (value >= initialDataMap.get("xMin").get(i) && value <= initialDataMap.get("xMax").get(i))
                 initialDataMap.get("X").add(value);
             else {
                 System.out.println("Ошибка ввода данных. Введённые данные не соответствуют заданному диапазону!");
