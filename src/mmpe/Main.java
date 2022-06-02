@@ -3,7 +3,7 @@ package mmpe;
 import mmpe.matrix.Matrix;
 
 import java.util.*;
-import java.util.stream.Stream;
+
 
 public class Main {
     public static void main(String[] args){
@@ -57,7 +57,8 @@ public class Main {
             if (value >= initialDataMap.get("xMin").get(i) && value <= initialDataMap.get("xMax").get(i))
                 initialDataMap.get("X").add(value);
             else {
-                System.out.println("Ошибка ввода данных. Введённые данные не соответствуют заданному диапазону!");
+                System.out.println("Ошибка ввода данных. Введённые данные не соответствуют заданному диапазону! [" + initialDataMap.get("xMin").get(i) +
+                        " - " + initialDataMap.get("xMax").get(i)+"]");
                 i--;
             }
             }

@@ -1,7 +1,6 @@
 package mmpe.matrix;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 
@@ -33,19 +32,6 @@ public class Matrix {
         matrix[0][14] = 8.58;
     }
 
-    public void fillingCodingFactorsMatrix(Map<String, ArrayList<Double>> initialMap, double[][] naturalFactorsMatrix) {
-        int columns = matrix.length;
-        int rows = matrix[0].length;
-        for (int i = 0; i < columns; i++) {
-            double xAvg = (initialMap.get("xMax").get(i) + initialMap.get("xMin").get(i) ) / 2;
-            double xMin = initialMap.get("xMin").get(i);
-            for (int j = 0; j< rows; j++) {
-                double elementMatrixNaturalFactors = naturalFactorsMatrix[i][j];
-                matrix[i][j] = (elementMatrixNaturalFactors - xAvg) / (xAvg - xMin);
-            }
-        }
-    }
-
     public void fillingNaturalFactorsMatrix(Map<String, ArrayList<Double>> initialMap){
         matrix[0][0] = initialMap.get("X").get(0);      matrix[1][0] = initialMap.get("X").get(1);       matrix[2][0] = initialMap.get("X").get(2);
         matrix[0][1] = 6;       matrix[1][1] = 4;       matrix[2][1] = 8;
@@ -64,60 +50,60 @@ public class Matrix {
         matrix[0][14] = 5.5;      matrix[1][14] = 4.5;       matrix[2][14] = 9.5;
     }
 
+    public void fillingCodingFactorsMatrix(Map<String, ArrayList<Double>> initialMap, double[][] naturalFactorsMatrix) {
+        for (int column = 0; column < matrix.length; column++) {
+            double xAvg = (initialMap.get("xMax").get(column) + initialMap.get("xMin").get(column) ) / 2;
+            double xMin = initialMap.get("xMin").get(column);
+            for (int row = 0; row < matrix[0].length; row++) {
+                matrix[column][row] = (naturalFactorsMatrix[column][row] - xAvg) / (xAvg - xMin);
+            }
+        }
+    }
+
     public void fillingExtendedMatrix(double[][] factorCodingMatrix, double[][] yExpMatrix) {
 
-        int colFC = factorCodingMatrix.length; // 3
-        int rowFC = factorCodingMatrix[0].length; // 15
-
         // перенос данных из кодированной матрицы в расширенную
-        for (int i = 1; i < colFC + 1; i++) {
-            for (int j = 0; j < rowFC; j++) {
-                matrix[i][j] = factorCodingMatrix[i - 1][j];
+        for (int column = 1; column < factorCodingMatrix.length + 1; column++) {
+            for (int row = 0; row < factorCodingMatrix[0].length; row++) {
+                matrix[column][row] = factorCodingMatrix[column - 1][row];
             }
         }
 
-        int rows = matrix[0].length;
         // заполнение нулевого единичного столбца и столбцы с 4 по 10
-        for (int i = 0; i < rows; i++) {
+        for (int row = 0; row <  matrix[0].length; row++) {
             // 0 столбец
-            matrix[0][i] = 1.0;
+            matrix[0][row] = 1.0;
             // x1x2
-            matrix[colFC + 1][i] = matrix[1][i] * matrix[2][i];
+            matrix[factorCodingMatrix.length + 1][row] = matrix[1][row] * matrix[2][row];
             //x1x3
-            matrix[colFC + 2][i] = matrix[1][i] * matrix[3][i];
+            matrix[factorCodingMatrix.length + 2][row] = matrix[1][row] * matrix[3][row];
             //x2x3
-            matrix[colFC + 3][i] = matrix[2][i] * matrix[3][i];
+            matrix[factorCodingMatrix.length + 3][row] = matrix[2][row] * matrix[3][row];
             //x1x2x3
-            matrix[colFC + 4][i] = matrix[1][i] * matrix[2][i] * matrix[3][i];
+            matrix[factorCodingMatrix.length + 4][row] = matrix[1][row] * matrix[2][row] * matrix[3][row];
             // x1^2-a
             double a = 0.73;
-            matrix[colFC + 5][i] = (matrix[1][i] * matrix[1][i]) - a;
+            matrix[factorCodingMatrix.length + 5][row] = (matrix[1][row] * matrix[1][row]) - a;
             // x2^2-a
-            matrix[colFC + 6][i] = (matrix[2][i] * matrix[2][i]) - a;
+            matrix[factorCodingMatrix.length + 6][row] = (matrix[2][row] * matrix[2][row]) - a;
             // x3^2-a
-            matrix[colFC + 7][i] = (matrix[3][i] * matrix[3][i]) - a;
+            matrix[factorCodingMatrix.length + 7][row] = (matrix[3][row] * matrix[3][row]) - a;
         }
 
         // заполнение с 11 по 20 столбец
-        int columns = matrix.length;
         int tmp = 0;
-        for (int i = columns / 2; i < columns; i++) { // 22
-            for (int j = 0; j < rows; j++) { // 15
-                matrix[i][j] = yExpMatrix[0][j] * matrix[tmp][j];
+        for (int column = matrix.length / 2; column < matrix.length; column++) { // 22
+            for (int row = 0; row <  matrix[0].length; row++) { // 15
+                matrix[column][row] = yExpMatrix[0][row] * matrix[tmp][row];
             }
             tmp++;
         }
     }
 
     public void fillingSumSquaresMatrix(double[][] expandedMatrix) {
-        for (int i = 0; i < 11; i++){
-            matrix[i][0] = getSumSquaresColumn(i, expandedMatrix);
-        }
-
-        int tmp = 0;
-        for (int i = 11; i < matrix.length; i++){
-            matrix[i][0] = getSumColumn(i, expandedMatrix) / matrix[tmp][0];
-            tmp++;
+        for (int column = 0; column < matrix.length / 2; column++){
+            matrix[column][0] = getSumSquaresColumn(column, expandedMatrix);
+            matrix[column + matrix.length / 2][0] = getSumColumn(column + matrix.length / 2, expandedMatrix) / matrix[column][0];
         }
     }
 
@@ -138,13 +124,11 @@ public class Matrix {
     }
 
     public void fillingCAOMatrix(double[][] yExpMatrix, double[][] regressionMatrix) {
-        int rows = matrix[0].length; // 15
-        for (int row = 0; row < rows; row++)
-            matrix[0][row] =
-                    Math.abs((yExpMatrix[0][row] - regressionMatrix[0][row]) / regressionMatrix[0][row]);
+        for (int row = 0; row < matrix[0].length; row++)
+            matrix[0][row] = Math.abs((yExpMatrix[0][row] - regressionMatrix[0][row]) / regressionMatrix[0][row]);
     }
 
-    public double getSumSquaresColumn(int column, double[][] expandedMatrix) {
+    private double getSumSquaresColumn(int column, double[][] expandedMatrix) {
         double sumExpandedMatrix = 0.0;
         for (int row = 0; row < expandedMatrix[0].length; row++){
             sumExpandedMatrix += expandedMatrix[column][row] * expandedMatrix[column][row];
@@ -152,7 +136,7 @@ public class Matrix {
         return sumExpandedMatrix;
     }
 
-    public double getSumColumn(int column, double[][] expandedMatrix) {
+    private double getSumColumn(int column, double[][] expandedMatrix) {
         double sum = 0.0;
         for (int row = 0; row < expandedMatrix[0].length; row++){
             sum += expandedMatrix[column][row];
@@ -181,10 +165,4 @@ public class Matrix {
         return matrix[column][row];
     }
 
-    @Override
-    public String toString() {
-        return "Matrix{" +
-                "matrix=" + Arrays.toString(matrix) +
-                '}';
-    }
 }
