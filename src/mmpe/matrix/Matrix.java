@@ -34,9 +34,9 @@ public class Matrix {
 
     public void fillingNaturalFactorsMatrix(Map<String, ArrayList<Double>> initialMap){
         matrix[0][0] = initialMap.get("X").get(0);      matrix[1][0] = initialMap.get("X").get(1);       matrix[2][0] = initialMap.get("X").get(2);
-        matrix[0][1] = 6;       matrix[1][1] = 4;       matrix[2][1] = 8;
-        matrix[0][2] = 5;      matrix[1][2] = 5;        matrix[2][2] = 8;
-        matrix[0][3] = 6;       matrix[1][3] = 5;        matrix[2][3] = 8;
+        matrix[0][1] = 2413600;       matrix[1][1] = 2184850;       matrix[2][1] = 3390080;
+        matrix[0][2] = 3048616;      matrix[1][2] = 2959737;        matrix[2][2] = 2629825;
+        matrix[0][3] = 2009892;       matrix[1][3] = 2194679;        matrix[2][3] = 2546322;
         matrix[0][4] = 5;      matrix[1][4] = 4;       matrix[2][4] = 11;
         matrix[0][5] = 6;       matrix[1][5] = 4;       matrix[2][5] = 11;
         matrix[0][6] = 5;      matrix[1][6] = 5;        matrix[2][6] = 11;
